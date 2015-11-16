@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head profile="http://www.w3.org/2005/10/profile">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="icon" href="./favicon.ico"> -->
+
+    <title>Mapa de la Inmigraci&oacute;n en el AMBA</title>
+
+    <!-- CartoDB Style -->
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+
+    <!-- bootstrap Style -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!--
+    bootstrap material design Styles
+    Include roboto.css to use the Roboto web font, material.css to include the theme and ripples.css to style the ripple effect
+    -->
+    <link rel="stylesheet" href="css/roboto.min.css" >
+    <link rel="stylesheet" href="css/material.min.css" >
+    <link rel="stylesheet" href="css/ripples.min.css" >
+
+    <!-- Flag icons -->
+    <link rel="stylesheet" href="css/flag-icon.css" >
+    <link rel="stylesheet" href="css/bootstrap-select.css" >
+
+  </head>
+
+  <style>
+    html, body, #container {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      !padding-top: 50px;
+    }
+
+    #map {
+      width: auto;
+      height: 100%;
+      !margin-top: 10px;
+    }
+
+    .panel {
+
+    }
+
+    .navbar-fixed-top {
+      !box-shadow: 0 6px 12px rgba(0,0,0,.155);
+      border-bottom: 1px solid #ddd;
+    }
+    #map .panel.panel-default {
+      position: absolute;
+      z-index: 1;
+      top: 40px;
+      right: 40px;
+      width: 350px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px 4px rgba(0,0,0,.1);
+      border: 1px solid #ccc;
+    }
+    .lead {
+        font-size: 18px;
+    }
+
+    .dropdown-menu>li>a {
+      -padding: 3px 30px !important;
+    }
+
+    .flag-icon{
+      background-size: 15px 10px!important;
+    }
+
+    .bootstrap-select.btn-group .dropdown-menu li a span.text {
+      padding-left: 10px;
+    }
+
+    .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text {
+      margin-right: 15px!important;
+    }
+    .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
+        right: inherit;
+    }
+    #btn-altmap a {
+      opacity: 0.55;
+      margin-right: 30px;
+      padding: 10px 0px!important;
+    }
+
+    #btn-altmap a:hover {
+      opacity: 1;
+    }
+    .navbar .navbar-nav>li>a {
+      padding-top: 25px!important;
+      padding-bottom: 25px!important;
+
+    }
+
+    a#btn-altmap {
+      z-index:10;
+      position: absolute;
+      top: -29px;
+      right: -29px;
+    }
+
+    .cartodb-legend-custom{
+        padding: 0!important;
+        color: inherit!important;
+        box-shadow: none!important;
+        -webkit-box-shadow: none!important;
+        -moz-box-shadow: none!important;
+        border: 0px!important;
+        position: relative!important;
+        bottom: 0!important;
+        right: 0!important;
+        background: none!important;
+
+    }
+    div.cartodb-legend-custom.choropleth li.graph{
+      border: 0px!important;
+    }
+    .quartile-item {
+      padding: 0;
+      text-align: right;
+      width: 9.09090909%!important;
+
+    }
+
+    #canvas-container{
+      text-align: center;
+    }
+    #canvas-container #graph {
+      width: 150px;
+      height: 150px;
+    }
+
+  </style>
+  <body>
+
+
+
+    <div id="container">
+
+      <div id="map">
+
+        <!-- info panel -->
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <a href="http://wwww.alt-map.com" class="btn btn-danger btn-fab btn-raised mdi-action-home" id="btn-altmap" title="Volver a Alt-Map"></a>
+              <h3 class="text-uppercase"><strong>Mapa de la Inmigraci&oacute;n</strong></h3>
+
+              <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas poblaciones de origen extranjero en el AMBA.</p>
+              <small class="text-muted"><em>Fuente: <a href="">Censo 2010 (INDEC)</a></em></small>
+
+              <hr/>
+
+              <h4><strong>1. Seleccionar pa&iacute;s</strong></h4>
+              <select class="selectpicker show-tick" id="pais_selector" data-width="220px" data-header="Pa&iacute;s de Origen">
+                  <option data="t_ext" class="flag-icon">Todos</option>
+                  <option data="t_de" class="flag-icon flag-icon-de">Alemania</option>
+                  <option data="t_ar" class="flag-icon flag-icon-ar">Argentina</option>
+                  <option data="t_bo" class="flag-icon flag-icon-bo" selected>Bolivia</option>
+                  <option data="t_br" class="flag-icon flag-icon-br">Brasil</option>
+                  <option data="t_ch" class="flag-icon flag-icon-ch">Chile</option>
+                  <option data="t_cn" class="flag-icon flag-icon-cn">China</option>
+                  <option data="t_co" class="flag-icon flag-icon-co">Colombia</option>
+                  <option data="t_kp" class="flag-icon flag-icon-kp">Corea</option>
+                  <option data="t_ec" class="flag-icon flag-icon-ec">Ecuador</option>
+                  <option data="t_es" class="flag-icon flag-icon-es">Espa&ntilde;a</option>
+                  <option data="t_us" class="flag-icon flag-icon-us">Estados Unidos</option>
+                  <option data="t_fr" class="flag-icon flag-icon-fr">Francia</option>
+                  <option data="t_it" class="flag-icon flag-icon-it">Italia</option>
+                  <option data="t_py" class="flag-icon flag-icon-py">Paraguay</option>
+                  <option data="t_pe" class="flag-icon flag-icon-pe">Peru</option>
+                  <option data="t_pl" class="flag-icon flag-icon-pl">Polonia</option>
+                  <option data="t_pt" class="flag-icon flag-icon-pt">Portugal</option>
+                  <option data="t_do" class="flag-icon flag-icon-do">Rep&uacute;blica Dominicana</option>
+                  <option data="t_ua" class="flag-icon flag-icon-ua">Ucrania</option>
+                  <option data="t_uy" class="flag-icon flag-icon-uy">Uruguay</option>
+                  <option data="t_ve" class="flag-icon flag-icon-ve">Venezuela</option>
+            </select>
+
+            <div class="form-group" id="poblacion_selector">
+              <label class="control-label"><h4><strong>2. Seleccionar poblaci&oacute;n base</strong></h4></label>
+              <div class="">
+                  <div class="radio radio-primary">
+                      <label><input type="radio" name="optionsRadios" data="t_ext" checked="true">Poblaci&oacute;n extranjera</label>
+                  </div>
+                  <div class="radio radio-primary">
+                      <label><input type="radio" name="optionsRadios" data="total" >Poblaci&oacute;n total</label>
+                  </div>
+              </div>
+            </div>
+
+            <hr/>
+
+            <div id="canvas-container">
+              <canvas id="graph"></canvas>
+            </div>
+
+          </div><!-- /. info panel body -->
+
+           <div class="panel-footer">
+
+             <div class="cartodb-legend choropleth cartodb-legend-custom">
+               <ul>
+                <li><h6><strong>Porcentaje por radio censal</strong></h6></li>
+                <li class="graph count_441">
+                   <div class="colors">
+                      <div class="quartile" style="background-color:#FFFFFF"></div>
+                      <div class="quartile" style="background-color:#ffffd9"></div>
+                      <div class="quartile" style="background-color:#edf8b1"></div>
+                      <div class="quartile" style="background-color:#c7e9b4"></div>
+                      <div class="quartile" style="background-color:#7fcdbb"></div>
+                      <div class="quartile" style="background-color:#41b6c4"></div>
+                      <div class="quartile" style="background-color:#1d91c0"></div>
+                      <div class="quartile" style="background-color:#225ea8"></div>
+                      <div class="quartile" style="background-color:#253494"></div>
+                      <div class="quartile" style="background-color:#081d58"></div>
+                      <div class="quartile" style="background-color:#000000"></div>
+                   </div>
+                 </li>
+                 <li class="graph">
+                   <div class="colors" style="font-weight:normal;">
+                     <div class="quartile quartile-item" style="">0</div>
+                     <div class="quartile quartile-item" style="">10</div>
+                     <div class="quartile quartile-item" style="">20</div>
+                     <div class="quartile quartile-item" style="">30</div>
+                     <div class="quartile quartile-item" style="">40</div>
+                     <div class="quartile quartile-item" style="">50</div>
+                     <div class="quartile quartile-item" style="">60</div>
+                     <div class="quartile quartile-item" style="">70</div>
+                     <div class="quartile quartile-item" style="">80</div>
+                     <div class="quartile quartile-item" style="">90</div>
+                     <div class="quartile quartile-item" style="">100</div>
+                   </div>
+
+                 </li>
+               </ul>
+             </div>
+
+           </div>
+
+        </div><!-- /. info panel -->
+
+
+
+      </div><!-- /. map -->
+
+
+    </div><!-- /.container -->
+
+
+
+    <!-- JS  calls before body ends -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="http://www.chartjs.org/assets/Chart.js"></script>
+
+    <!-- JS material design -->
+    <script src="js/ripples.min.js"></script>
+    <script src="js/material.min.js"></script>
+    <script src="js/bootstrap-select.js"></script>
+
+    <!-- JS cartodb init -->
+    <script>
+    var json = 'https://mposkus.cartodb.com/api/v2/viz/291be28e-8a4c-11e5-b625-0e3ff518bd15/viz.json';
+    var sql = cartodb.SQL({ user: 'mposkus' });
+
+    var mapoptions = {
+        center: [-34.61, -58.42],
+        zoom: 12,
+        scrollwheel: true,
+        zoomControl: true
+    };
+
+    function getdata(){
+      pais = $( "#pais_selector option:selected" ).attr('data');
+      console.log("getdata " + pais);
+      base = $( "#poblacion_selector input[name=optionsRadios]:checked").attr('data');
+      console.log("getdata " + base);
+      query_map = "SELECT cartodb_id, the_geom_webmercator, total, t_ext, "+ pais + ", CAST((CAST(" + pais + " as float)/" + base + ")*100 as decimal(5,2)) AS porcentaje FROM extranjeros20_amba_2010 WHERE total > 0";
+      console.log("getdata " + query_map);
+      query_chart = "SELECT SUM("+ pais + ") as pais_total, SUM("+ base + ") - SUM("+ pais + ") as base_rest FROM extranjeros20_amba_2010";
+      console.log("getdata " + query_chart);
+    }; // end getdata()
+
+
+    // Chart.js
+    function chartviz() {
+          sql.execute(query_chart).done(function(data) {
+            var p = [];
+            var b = [];
+            for (i in data.rows){
+              p.push(data.rows[i].pais_total)
+              b.push(data.rows[i].base_rest)
+            }
+            console.log("chartviz pais " + p[0])
+            console.log("chartviz base " + b[0])
+
+            var data = [
+               {
+                   value: p[0],
+                   color:"#F7464A",
+                   highlight: "#FF5A5E",
+                   label: "Pais"
+               },
+               {
+                   value: b[0],
+                   color: "#ddd",
+                   highlight: "#ccc",
+                   label: "Base"
+               }
+             ];
+
+             $('#graph').remove();
+             $('#canvas-container').append('<canvas id="graph"></canvas>');
+             var ctx = document.getElementById("graph").getContext("2d");
+             var myPieChart = new Chart(ctx).Pie(data, {
+               animateScale : false,
+               animationEasing : "linear",
+               animationSteps: 20
+             });
+
+         });
+    }; // end chartviz()
+
+    function createSelector(layer) {
+      getdata();
+      layer.setSQL(query_map);
+      chartviz();
+    }; // end layer selector
+
+$(document).ready(function() {
+
+      // Bootstrap selector init
+     $('.selectpicker').selectpicker('');
+
+     // Bootstrap material design init
+     $.material.init();
+
+
+    // cartodb visualization init
+    cartodb.createVis('map', json, mapoptions)
+       .done(function(vis, layers) {
+         subLayer = layers[1].getSubLayer(0);
+         createSelector(subLayer);
+    });
+
+    // update values based on panel selections
+     $('#poblacion_selector, #pais_selector').on('change', function() {
+       getdata();
+       createSelector(subLayer).setSQL(query_map);
+       chartviz();
+     });
+
+}); // end document ready
+
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,116 @@
+/** CSS Custom para el Mapa de la Inmigracion de Alt-Map **/
+/** Link: http://mposkus.github.io/amba-inmigracion/ **/
+
+  html, body, #container {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      !padding-top: 50px;
+    }
+
+    #map {
+      width: auto;
+      height: 100%;
+      !margin-top: 10px;
+    }
+
+    .panel {
+
+    }
+
+    .navbar-fixed-top {
+      !box-shadow: 0 6px 12px rgba(0,0,0,.155);
+      border-bottom: 1px solid #ddd;
+    }
+    #map .panel.panel-default {
+      position: absolute;
+      z-index: 1;
+      top: 40px;
+      right: 40px;
+      width: 350px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px 4px rgba(0,0,0,.1);
+      border: 1px solid #ccc;
+    }
+    .lead {
+        font-size: 18px;
+    }
+
+    .dropdown-menu>li>a {
+      -padding: 3px 30px !important;
+    }
+
+    .flag-icon{
+      background-size: 20px 80% !important;
+    }
+
+    .bootstrap-select.btn-group .dropdown-menu li a span.text {
+      padding-left: 10px;
+    }
+
+    .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text {
+      margin-right: 15px!important;
+    }
+    .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
+        right: inherit;
+    }
+    #btn-altmap a {
+      opacity: 0.55;
+      margin-right: 30px;
+      padding: 10px 0px!important;
+    }
+
+    #btn-altmap a:hover {
+      opacity: 1;
+    }
+    .navbar .navbar-nav>li>a {
+      padding-top: 25px!important;
+      padding-bottom: 25px!important;
+
+    }
+
+    a#btn-altmap {
+      z-index:10;
+      position: absolute;
+      top: -29px;
+      right: -29px;
+    }
+
+    .cartodb-legend-custom{
+        padding: 0!important;
+        color: inherit!important;
+        box-shadow: none!important;
+        -webkit-box-shadow: none!important;
+        -moz-box-shadow: none!important;
+        border: 0px!important;
+        position: relative!important;
+        bottom: 0!important;
+        right: 0!important;
+        background: none!important;
+
+    }
+    div.cartodb-legend-custom.choropleth li.graph{
+      border: 0px!important;
+    }
+    .quartile-item {
+      padding: 0;
+      text-align: right;
+      width: 9.09090909%!important;
+
+    }
+
+    #canvas-container{
+      text-align: left;
+
+    }
+    #canvas-container #graph {
+    }
+    #canvas-container #graph-text {
+      width: 70%;
+      float: right !important;
+    }

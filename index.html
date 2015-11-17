@@ -7,9 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- <link rel="icon" href="./favicon.ico"> -->
+    <meta name="description" content="Mapa interactivo de las comunidades inmigrantes y su distribuci&oacute;n territorial de en la region metropolitana de Buenos Aires (AMBA)">
+    <meta name="author" content="Mariana Poskus mariana[at]gmail[dot]com">
+    <meta name="keywords" content="AMBA,Buenos Aires,Inmigracion,CartoDB,ChartJS,Alt-Map">
+    <link rel="icon" href="img/glyphicons-341-globe.png">
 
     <title>Mapa de la Inmigraci&oacute;n en el AMBA</title>
 
@@ -31,121 +32,10 @@
     <link rel="stylesheet" href="css/flag-icon.css" >
     <link rel="stylesheet" href="css/bootstrap-select.css" >
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/altmap_custom.css" >
+
   </head>
-
-  <style>
-    html, body, #container {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    body {
-      !padding-top: 50px;
-    }
-
-    #map {
-      width: auto;
-      height: 100%;
-      !margin-top: 10px;
-    }
-
-    .panel {
-
-    }
-
-    .navbar-fixed-top {
-      !box-shadow: 0 6px 12px rgba(0,0,0,.155);
-      border-bottom: 1px solid #ddd;
-    }
-    #map .panel.panel-default {
-      position: absolute;
-      z-index: 1;
-      top: 40px;
-      right: 40px;
-      width: 350px;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      border-radius: 3px;
-      box-shadow: 0 0 8px 4px rgba(0,0,0,.1);
-      border: 1px solid #ccc;
-    }
-    .lead {
-        font-size: 18px;
-    }
-
-    .dropdown-menu>li>a {
-      -padding: 3px 30px !important;
-    }
-
-    .flag-icon{
-      background-size: 15px 10px!important;
-    }
-
-    .bootstrap-select.btn-group .dropdown-menu li a span.text {
-      padding-left: 10px;
-    }
-
-    .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text {
-      margin-right: 15px!important;
-    }
-    .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
-        right: inherit;
-    }
-    #btn-altmap a {
-      opacity: 0.55;
-      margin-right: 30px;
-      padding: 10px 0px!important;
-    }
-
-    #btn-altmap a:hover {
-      opacity: 1;
-    }
-    .navbar .navbar-nav>li>a {
-      padding-top: 25px!important;
-      padding-bottom: 25px!important;
-
-    }
-
-    a#btn-altmap {
-      z-index:10;
-      position: absolute;
-      top: -29px;
-      right: -29px;
-    }
-
-    .cartodb-legend-custom{
-        padding: 0!important;
-        color: inherit!important;
-        box-shadow: none!important;
-        -webkit-box-shadow: none!important;
-        -moz-box-shadow: none!important;
-        border: 0px!important;
-        position: relative!important;
-        bottom: 0!important;
-        right: 0!important;
-        background: none!important;
-
-    }
-    div.cartodb-legend-custom.choropleth li.graph{
-      border: 0px!important;
-    }
-    .quartile-item {
-      padding: 0;
-      text-align: right;
-      width: 9.09090909%!important;
-
-    }
-
-    #canvas-container{
-      text-align: center;
-    }
-    #canvas-container #graph {
-      width: 150px;
-      height: 150px;
-    }
-
-  </style>
   <body>
 
 
@@ -160,17 +50,17 @@
               <a href="http://wwww.alt-map.com" class="btn btn-danger btn-fab btn-raised mdi-action-home" id="btn-altmap" title="Volver a Alt-Map"></a>
               <h3 class="text-uppercase"><strong>Mapa de la Inmigraci&oacute;n</strong></h3>
 
-              <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas poblaciones de origen extranjero en el AMBA.</p>
-              <small class="text-muted"><em>Fuente: <a href="">Censo 2010 (INDEC)</a></em></small>
+              <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas comunidades extranjeras en el AMBA.</p>
+              <small class="text-muted"><em>Fuente: <a href="http://www.censo2010.indec.gov.ar" target="_blank">Censo 2010 (INDEC)</a></em></small>
 
               <hr/>
 
               <h4><strong>1. Seleccionar pa&iacute;s</strong></h4>
               <select class="selectpicker show-tick" id="pais_selector" data-width="220px" data-header="Pa&iacute;s de Origen">
-                  <option data="t_ext" class="flag-icon">Todos</option>
+                  <option data="t_ext" class="flag-icon" selected="">Todos</option>
                   <option data="t_de" class="flag-icon flag-icon-de">Alemania</option>
-                  <option data="t_ar" class="flag-icon flag-icon-ar">Argentina</option>
-                  <option data="t_bo" class="flag-icon flag-icon-bo" selected>Bolivia</option>
+                  <!-- <option data="t_ar" class="flag-icon flag-icon-ar">Argentina</option> -->
+                  <option data="t_bo" class="flag-icon flag-icon-bo">Bolivia</option>
                   <option data="t_br" class="flag-icon flag-icon-br">Brasil</option>
                   <option data="t_ch" class="flag-icon flag-icon-ch">Chile</option>
                   <option data="t_cn" class="flag-icon flag-icon-cn">China</option>
@@ -192,27 +82,36 @@
             </select>
 
             <div class="form-group" id="poblacion_selector">
-              <label class="control-label"><h4><strong>2. Seleccionar poblaci&oacute;n base</strong></h4></label>
+              <label class="control-label"><h4><strong>2. Calcular proporci&oacute;n en base a</strong></h4></label>
               <div class="">
                   <div class="radio radio-primary">
-                      <label><input type="radio" name="optionsRadios" data="t_ext" checked="true">Poblaci&oacute;n extranjera</label>
+                      <label><input type="radio" name="optionsRadios" data="t_ext">Poblaci&oacute;n extranjera</label>
                   </div>
                   <div class="radio radio-primary">
-                      <label><input type="radio" name="optionsRadios" data="total" >Poblaci&oacute;n total</label>
+                      <label><input type="radio" name="optionsRadios" data="total" checked="true">Poblaci&oacute;n total</label>
                   </div>
               </div>
             </div>
 
-            <hr/>
-
-            <div id="canvas-container">
-              <canvas id="graph"></canvas>
-            </div>
+            <div id="canvas-container" class="clearfix">
+              <hr/>
+              <h3><span class="flag-icon" id="pais_f"></span><strong class="pais_n">&nbsp;</strong>&nbsp;</h3>
+              <canvas id="graph" width="75" height="75"></canvas>
+              <div id="graph-text">
+                <p>
+                  Seg&uacute;n el &uacute;ltimo censo, en el AMBA viven <span class="badge" id="pais_p">&nbsp;</span> personas provenientes de  <strong class="pais_n">&nbsp;</strong>.
+                </p>
+                <p>
+                  Esto representa el <span class="badge" id="porc_ext">&nbsp;</span> de los extranjeros, o el <span class="badge" id="porc_total">&nbsp;</span> del total de habitantes de la regi&oacute;n.
+                </p>
+              </div>
+            </div><!-- /. canvas -->
 
           </div><!-- /. info panel body -->
 
            <div class="panel-footer">
 
+             <!-- Leyenda -->
              <div class="cartodb-legend choropleth cartodb-legend-custom">
                <ul>
                 <li><h6><strong>Porcentaje por radio censal</strong></h6></li>
@@ -248,20 +147,12 @@
 
                  </li>
                </ul>
-             </div>
 
-           </div>
-
+             </div><!-- /.cartodb-legend -->
+           </div><!-- /. panel-footer -->
         </div><!-- /. info panel -->
-
-
-
       </div><!-- /. map -->
-
-
     </div><!-- /.container -->
-
-
 
     <!-- JS  calls before body ends -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -275,8 +166,11 @@
     <script src="js/material.min.js"></script>
     <script src="js/bootstrap-select.js"></script>
 
-    <!-- JS cartodb init -->
+    <!-- map init -->
     <script>
+    // hide stats container
+    $("#canvas-container").hide();
+
     var json = 'https://mposkus.cartodb.com/api/v2/viz/291be28e-8a4c-11e5-b625-0e3ff518bd15/viz.json';
     var sql = cartodb.SQL({ user: 'mposkus' });
 
@@ -287,100 +181,142 @@
         zoomControl: true
     };
 
+    // get #panel selected values for display and define sql queries
     function getdata(){
       pais = $( "#pais_selector option:selected" ).attr('data');
       console.log("getdata " + pais);
+      pais_n = $( "#pais_selector option:selected" ).text();
+      console.log("getdata " + pais_n);
+      pais_c = $( "#pais_selector option:selected" ).attr('class');
+      console.log("getdata " + pais_c);
       base = $( "#poblacion_selector input[name=optionsRadios]:checked").attr('data');
       console.log("getdata " + base);
-      query_map = "SELECT cartodb_id, the_geom_webmercator, total, t_ext, "+ pais + ", CAST((CAST(" + pais + " as float)/" + base + ")*100 as decimal(5,2)) AS porcentaje FROM extranjeros20_amba_2010 WHERE total > 0";
-      console.log("getdata " + query_map);
-      query_chart = "SELECT SUM("+ pais + ") as pais_total, SUM("+ base + ") - SUM("+ pais + ") as base_rest FROM extranjeros20_amba_2010";
-      console.log("getdata " + query_chart);
+      query_map = "SELECT cartodb_id, the_geom_webmercator, nombre, link, total, CAST((CAST("+ pais + " as float)/" + base + ")*100 as decimal(5,2)) AS porcentaje, CAST((CAST("+pais+" as float)/total)*100 as decimal(5,2)) AS porc_ext FROM extranjeros20_amba_2010 WHERE total > 0";
+      //console.log("getdata " + query_map);
+      query_chart = "SELECT SUM("+ pais + ") as pais_total, SUM("+ base + ") - SUM("+ pais + ") as base_rest, SUM(total) as pob_total, CAST((CAST(SUM("+ pais + ") as float)/SUM(total))*100 as decimal(5,2)) AS porc_total, CAST((CAST(SUM("+ pais + ") as float)/SUM(t_ext))*100 as decimal(5,2)) AS porc_ext FROM extranjeros20_amba_2010";
+      // console.log("getdata " + query_chart);
     }; // end getdata()
 
 
     // Chart.js
     function chartviz() {
-          sql.execute(query_chart).done(function(data) {
-            var p = [];
-            var b = [];
-            for (i in data.rows){
-              p.push(data.rows[i].pais_total)
-              b.push(data.rows[i].base_rest)
-            }
-            console.log("chartviz pais " + p[0])
-            console.log("chartviz base " + b[0])
+          var val = $("#pais_selector option:selected").attr('data');
 
-            var data = [
-               {
-                   value: p[0],
-                   color:"#F7464A",
-                   highlight: "#FF5A5E",
-                   label: "Pais"
-               },
-               {
-                   value: b[0],
-                   color: "#ddd",
-                   highlight: "#ccc",
-                   label: "Base"
-               }
-             ];
+          // only do if panel selection is not 'Todos (los paises)'
+          if (val !== 't_ext'){
+                  $("#canvas-container").show();
+                  sql.execute(query_chart).done(function(data) {
 
-             $('#graph').remove();
-             $('#canvas-container').append('<canvas id="graph"></canvas>');
-             var ctx = document.getElementById("graph").getContext("2d");
-             var myPieChart = new Chart(ctx).Pie(data, {
-               animateScale : false,
-               animationEasing : "linear",
-               animationSteps: 20
-             });
+                    // create arrays and store sql values
+                    var p = [];
+                    var b = [];
+                    var pt = [];
+                    var pe = [];
+                    for (i in data.rows){
+                      p.push(data.rows[i].pais_total);
+                      b.push(data.rows[i].base_rest);
+                      pt.push(data.rows[i].porc_total);
+                      pe.push(data.rows[i].porc_ext);
+                    }
 
-         });
+
+                    // testing outputs
+                    console.log("chartviz pais " + p[0].toLocaleString('es'))
+                    console.log("chartviz base " + b[0].toLocaleString('es'))
+                    console.log("chartviz porcentaje pais/poblacion " + pt[0].toLocaleString('es'))
+                    console.log("chartviz porcentaje pais/extranjeros " + pe[0].toLocaleString('es'))
+
+                    // style data points
+                    var data = [
+                       {
+                           value: p[0],
+                           color:"#7fcdbb",
+                           highlight: "#1d91c0",
+                           label: "Pais"
+                       },
+                       {
+                           value: b[0],
+                           color: "#ddd",
+                           highlight: "#ccc",
+                           label: "Base"
+                       }
+                     ];
+
+                     // remove canvas and reappend -- otherwise old data will still appear
+                     $('#graph').remove();
+                     $('#canvas-container').append('<canvas id="graph" class="" width="75" height="75"></canvas>');
+                     var ctx = document.getElementById("graph").getContext("2d");
+                     var myPieChart = new Chart(ctx).Pie(data, {
+                       animateScale : false,
+                       animationEasing : "linear",
+                       animationSteps: 20,
+                       showTooltips: false
+                     });
+                     $('#pais_p').html(p[0].toLocaleString('es'));
+                     $('#porc_ext').html(pe[0].toLocaleString('es')+"%");
+                     $('#porc_total').html(pt[0].toLocaleString('es')+"%");
+
+                 });
+                 $('.pais_n').html(pais_n);
+                 $('#pais_f').attr('class', pais_c);
+
+         }
+         else {
+           console.log(val + " selected and chartviz not initiated")
+           $("#canvas-container").hide();
+         }
     }; // end chartviz()
 
+    // groups map/form selector/chart data and updates viz
     function createSelector(layer) {
       getdata();
       layer.setSQL(query_map);
       chartviz();
-    }; // end layer selector
-
-$(document).ready(function() {
-
-      // Bootstrap selector init
-     $('.selectpicker').selectpicker('');
-
-     // Bootstrap material design init
-     $.material.init();
+    }; // end createSelector()
 
 
-    // cartodb visualization init
-    cartodb.createVis('map', json, mapoptions)
-       .done(function(vis, layers) {
-         subLayer = layers[1].getSubLayer(0);
-         createSelector(subLayer);
-    });
+    // viz init
+    $(document).ready(function() {
 
-    // update values based on panel selections
-     $('#poblacion_selector, #pais_selector').on('change', function() {
-       getdata();
-       createSelector(subLayer).setSQL(query_map);
-       chartviz();
-     });
+          // Bootstrap selector init
+         $('.selectpicker').selectpicker('');
 
-}); // end document ready
+         // Bootstrap material design init
+         $.material.init();
 
+
+        // cartodb visualization init
+        cartodb.createVis('map', json, mapoptions)
+           .done(function(vis, layers) {
+              subLayer = layers[1].getSubLayer(1);
+              createSelector(subLayer);
+              subLayer.setInteraction(true);
+
+        }).on('error', function() {
+          cartodb.log.log("some error occurred" + error);
+        });
+
+        // update values based on panel selections
+         $('#poblacion_selector, #pais_selector').on('change', function() {
+           createSelector(subLayer);
+         });
+
+
+    }); // end document ready
 
     </script>
+
+    <!-- Google analytics -->
     <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-70203613-1', 'auto');
-  ga('send', 'pageview');
+      ga('create', 'UA-70203613-1', 'auto');
+      ga('send', 'pageview');
 
-</script>
+    </script>
 
   </body>
 </html>

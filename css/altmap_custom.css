@@ -77,14 +77,14 @@
     a#btn-altmap, a#btn-menu {
       z-index:10;
       position: absolute;
-      top: -29px;
+      top: 15px;
 
     }
     a#btn-altmap{
-      right: -29px;
+      right: 15px;
     }
     a#btn-menu{
-      right: 29px;
+      right: 75px;
     }
 
     .cartodb-legend-custom{
@@ -128,4 +128,9 @@
 
     h1, h2, h3 {
       margin-top: 0px!important;
+    }
+
+    .panel{
+      max-height:80%;
+      overflow-y:auto;
     }

@@ -46,8 +46,12 @@
 
         <!-- info panel -->
         <div class="panel panel-default">
-            <div class="panel-body">
+            <div class="panel-heading">
+              <a href="#Foo" class="btn btn-info btn-fab btn-raised mdi-navigation-menu" id="btn-menu" data-toggle="collapse" title="Mostrar/Ocultar Panel" onclick="$('.panel-body').toggle();"></a>
               <a href="http://wwww.alt-map.com" class="btn btn-danger btn-fab btn-raised mdi-action-home" id="btn-altmap" title="Volver a Alt-Map"></a>
+            </div>
+            <div class="panel-body">
+
               <h3 class="text-uppercase"><strong>Mapa de la Inmigraci&oacute;n</strong></h3>
 
               <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas comunidades extranjeras en el AMBA.</p>
@@ -57,10 +61,10 @@
 
               <h4><strong>1. Seleccionar pa&iacute;s</strong></h4>
               <select class="selectpicker show-tick" id="pais_selector" data-width="220px" data-header="Pa&iacute;s de Origen">
-                  <option data="t_ext" class="flag-icon" selected="">Todos</option>
+                  <option data="t_ext" class="flag-icon">Todos</option>
                   <option data="t_de" class="flag-icon flag-icon-de">Alemania</option>
                   <!-- <option data="t_ar" class="flag-icon flag-icon-ar">Argentina</option> -->
-                  <option data="t_bo" class="flag-icon flag-icon-bo">Bolivia</option>
+                  <option data="t_bo" class="flag-icon flag-icon-bo" selected="">Bolivia</option>
                   <option data="t_br" class="flag-icon flag-icon-br">Brasil</option>
                   <option data="t_ch" class="flag-icon flag-icon-ch">Chile</option>
                   <option data="t_cn" class="flag-icon flag-icon-cn">China</option>
@@ -85,10 +89,10 @@
               <label class="control-label"><h4><strong>2. Calcular proporci&oacute;n en base a</strong></h4></label>
               <div class="">
                   <div class="radio radio-primary">
-                      <label><input type="radio" name="optionsRadios" data="t_ext">Poblaci&oacute;n extranjera</label>
+                      <label><input type="radio" name="optionsRadios" data="t_ext" checked="true">Poblaci&oacute;n extranjera</label>
                   </div>
                   <div class="radio radio-primary">
-                      <label><input type="radio" name="optionsRadios" data="total" checked="true">Poblaci&oacute;n total</label>
+                      <label><input type="radio" name="optionsRadios" data="total">Poblaci&oacute;n total</label>
                   </div>
               </div>
             </div>

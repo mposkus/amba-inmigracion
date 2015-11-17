@@ -30,7 +30,7 @@
       z-index: 1;
       top: 40px;
       right: 40px;
-      width: 350px;
+      width: 300px;
       -webkit-border-radius: 3px;
       -moz-border-radius: 3px;
       border-radius: 3px;
@@ -74,11 +74,17 @@
 
     }
 
-    a#btn-altmap {
+    a#btn-altmap, a#btn-menu {
       z-index:10;
       position: absolute;
       top: -29px;
+
+    }
+    a#btn-altmap{
       right: -29px;
+    }
+    a#btn-menu{
+      right: 29px;
     }
 
     .cartodb-legend-custom{
@@ -113,4 +119,13 @@
     #canvas-container #graph-text {
       width: 70%;
       float: right !important;
+    }
+
+    hr{
+      margin-top: 10px!important;
+      margin-bottom: 10px!important;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0px!important;
     }

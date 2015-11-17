@@ -163,17 +163,17 @@
               <a href="http://wwww.alt-map.com" class="btn btn-danger btn-fab btn-raised mdi-action-home" id="btn-altmap" title="Volver a Alt-Map"></a>
               <h3 class="text-uppercase"><strong>Mapa de la Inmigraci&oacute;n</strong></h3>
 
-              <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas poblaciones de origen extranjero en el AMBA.</p>
+              <p class="text-muted">El mapa muestra la distribuci&oacute;n territorial de las distintas comunidades extranjeras en el AMBA.</p>
               <small class="text-muted"><em>Fuente: <a href="">Censo 2010 (INDEC)</a></em></small>
 
               <hr/>
 
               <h4><strong>1. Seleccionar pa&iacute;s</strong></h4>
               <select class="selectpicker show-tick" id="pais_selector" data-width="220px" data-header="Pa&iacute;s de Origen">
-                  <option data="t_ext" class="flag-icon">Todos</option>
+                  <option data="t_ext" class="flag-icon" selected="">Todos</option>
                   <option data="t_de" class="flag-icon flag-icon-de">Alemania</option>
                   <!-- <option data="t_ar" class="flag-icon flag-icon-ar">Argentina</option> -->
-                  <option data="t_bo" class="flag-icon flag-icon-bo" selected="">Bolivia</option>
+                  <option data="t_bo" class="flag-icon flag-icon-bo">Bolivia</option>
                   <option data="t_br" class="flag-icon flag-icon-br">Brasil</option>
                   <option data="t_ch" class="flag-icon flag-icon-ch">Chile</option>
                   <option data="t_cn" class="flag-icon flag-icon-cn">China</option>
@@ -195,7 +195,7 @@
             </select>
 
             <div class="form-group" id="poblacion_selector">
-              <label class="control-label"><h4><strong>2. Calcular porcentaje en base a:</strong></h4></label>
+              <label class="control-label"><h4><strong>2. Calcular proporci&oacute;n en base a</strong></h4></label>
               <div class="">
                   <div class="radio radio-primary">
                       <label><input type="radio" name="optionsRadios" data="t_ext">Poblaci&oacute;n extranjera</label>
@@ -272,8 +272,6 @@
 
     </div><!-- /.container -->
 
-
-
     <!-- JS  calls before body ends -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
@@ -288,6 +286,9 @@
 
     <!-- map init -->
     <script>
+    // hide stats container
+    $("#canvas-container").hide();
+
     var json = 'https://mposkus.cartodb.com/api/v2/viz/291be28e-8a4c-11e5-b625-0e3ff518bd15/viz.json';
     var sql = cartodb.SQL({ user: 'mposkus' });
 
@@ -308,7 +309,7 @@
       console.log("getdata " + pais_c);
       base = $( "#poblacion_selector input[name=optionsRadios]:checked").attr('data');
       console.log("getdata " + base);
-      query_map = "SELECT cartodb_id, the_geom_webmercator, total, t_ext, "+ pais + ", CAST((CAST(" + pais + " as float)/" + base + ")*100 as decimal(5,2)) AS porcentaje FROM extranjeros20_amba_2010 WHERE total > 0";
+      query_map = "SELECT cartodb_id, the_geom_webmercator, nombre, link, total, CAST((CAST("+ pais + " as float)/" + base + ")*100 as decimal(5,2)) AS porcentaje, CAST((CAST("+pais+" as float)/total)*100 as decimal(5,2)) AS porc_ext FROM extranjeros20_amba_2010 WHERE total > 0";
       //console.log("getdata " + query_map);
       query_chart = "SELECT SUM("+ pais + ") as pais_total, SUM("+ base + ") - SUM("+ pais + ") as base_rest, SUM(total) as pob_total, CAST((CAST(SUM("+ pais + ") as float)/SUM(total))*100 as decimal(5,2)) AS porc_total, CAST((CAST(SUM("+ pais + ") as float)/SUM(t_ext))*100 as decimal(5,2)) AS porc_ext FROM extranjeros20_amba_2010";
       // console.log("getdata " + query_chart);
@@ -391,20 +392,22 @@
          // Bootstrap material design init
          $.material.init();
 
+
         // cartodb visualization init
         cartodb.createVis('map', json, mapoptions)
            .done(function(vis, layers) {
-             subLayer = layers[1].getSubLayer(0);
-             createSelector(subLayer);
+              subLayer = layers[1].getSubLayer(1);
+              createSelector(subLayer);
+              subLayer.setInteraction(true);
+
+        }).on('error', function() {
+          cartodb.log.log("some error occurred" + error);
         });
 
         // update values based on panel selections
          $('#poblacion_selector, #pais_selector').on('change', function() {
            createSelector(subLayer);
          });
-
-         // hide stats container
-         $("#canvas-container").hide();
 
 
     }); // end document ready

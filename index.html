@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Mapa interactivo de las comunidades inmigrantes y su distribuci&oacute;n territorial de en la region metropolitana de Buenos Aires (AMBA)">
+    <meta name="author" content="Mariana Poskus mariana[at]gmail[dot]com">
+    <meta name="keywords" content="AMBA,Buenos Aires,Inmigracion,CartoDB,ChartJS,Alt-Map">
     <link rel="icon" href="img/glyphicons-341-globe.png">
 
     <title>Mapa de la Inmigraci&oacute;n en el AMBA</title>
@@ -31,124 +32,10 @@
     <link rel="stylesheet" href="css/flag-icon.css" >
     <link rel="stylesheet" href="css/bootstrap-select.css" >
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/altmap_custom.css" >
+
   </head>
-
-  <style>
-    html, body, #container {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    body {
-      !padding-top: 50px;
-    }
-
-    #map {
-      width: auto;
-      height: 100%;
-      !margin-top: 10px;
-    }
-
-    .panel {
-
-    }
-
-    .navbar-fixed-top {
-      !box-shadow: 0 6px 12px rgba(0,0,0,.155);
-      border-bottom: 1px solid #ddd;
-    }
-    #map .panel.panel-default {
-      position: absolute;
-      z-index: 1;
-      top: 40px;
-      right: 40px;
-      width: 350px;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      border-radius: 3px;
-      box-shadow: 0 0 8px 4px rgba(0,0,0,.1);
-      border: 1px solid #ccc;
-    }
-    .lead {
-        font-size: 18px;
-    }
-
-    .dropdown-menu>li>a {
-      -padding: 3px 30px !important;
-    }
-
-    .flag-icon{
-      background-size: 20px 80% !important;
-    }
-
-    .bootstrap-select.btn-group .dropdown-menu li a span.text {
-      padding-left: 10px;
-    }
-
-    .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text {
-      margin-right: 15px!important;
-    }
-    .bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
-        right: inherit;
-    }
-    #btn-altmap a {
-      opacity: 0.55;
-      margin-right: 30px;
-      padding: 10px 0px!important;
-    }
-
-    #btn-altmap a:hover {
-      opacity: 1;
-    }
-    .navbar .navbar-nav>li>a {
-      padding-top: 25px!important;
-      padding-bottom: 25px!important;
-
-    }
-
-    a#btn-altmap {
-      z-index:10;
-      position: absolute;
-      top: -29px;
-      right: -29px;
-    }
-
-    .cartodb-legend-custom{
-        padding: 0!important;
-        color: inherit!important;
-        box-shadow: none!important;
-        -webkit-box-shadow: none!important;
-        -moz-box-shadow: none!important;
-        border: 0px!important;
-        position: relative!important;
-        bottom: 0!important;
-        right: 0!important;
-        background: none!important;
-
-    }
-    div.cartodb-legend-custom.choropleth li.graph{
-      border: 0px!important;
-    }
-    .quartile-item {
-      padding: 0;
-      text-align: right;
-      width: 9.09090909%!important;
-
-    }
-
-    #canvas-container{
-      text-align: left;
-
-    }
-    #canvas-container #graph {
-    }
-    #canvas-container #graph-text {
-      width: 70%;
-      float: right !important;
-    }
-
-  </style>
   <body>
 
 
@@ -224,6 +111,7 @@
 
            <div class="panel-footer">
 
+             <!-- Leyenda -->
              <div class="cartodb-legend choropleth cartodb-legend-custom">
                <ul>
                 <li><h6><strong>Porcentaje por radio censal</strong></h6></li>
@@ -259,17 +147,11 @@
 
                  </li>
                </ul>
-             </div>
 
-           </div>
-
+             </div><!-- /.cartodb-legend -->
+           </div><!-- /. panel-footer -->
         </div><!-- /. info panel -->
-
-
-
       </div><!-- /. map -->
-
-
     </div><!-- /.container -->
 
     <!-- JS  calls before body ends -->
@@ -319,9 +201,13 @@
     // Chart.js
     function chartviz() {
           var val = $("#pais_selector option:selected").attr('data');
+
+          // only do if panel selection is not 'Todos (los paises)'
           if (val !== 't_ext'){
                   $("#canvas-container").show();
                   sql.execute(query_chart).done(function(data) {
+
+                    // create arrays and store sql values
                     var p = [];
                     var b = [];
                     var pt = [];
@@ -333,11 +219,14 @@
                       pe.push(data.rows[i].porc_ext);
                     }
 
+
+                    // testing outputs
                     console.log("chartviz pais " + p[0].toLocaleString('es'))
                     console.log("chartviz base " + b[0].toLocaleString('es'))
                     console.log("chartviz porcentaje pais/poblacion " + pt[0].toLocaleString('es'))
                     console.log("chartviz porcentaje pais/extranjeros " + pe[0].toLocaleString('es'))
 
+                    // style data points
                     var data = [
                        {
                            value: p[0],
@@ -378,12 +267,15 @@
          }
     }; // end chartviz()
 
+    // groups map/form selector/chart data and updates viz
     function createSelector(layer) {
       getdata();
       layer.setSQL(query_map);
       chartviz();
-    }; // end layer selector
+    }; // end createSelector()
 
+
+    // viz init
     $(document).ready(function() {
 
           // Bootstrap selector init
